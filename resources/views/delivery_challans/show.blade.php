@@ -1,6 +1,53 @@
 @extends('layouts.app')
 
 @section('content')
+    <style>
+        .meter-grid-preview {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .meter-col-preview {
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            overflow: hidden;
+        }
+
+        .meter-col-preview .col-head {
+            background: #f8f9fa;
+            font-weight: 600;
+            padding: 0.45rem 0.6rem;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 0.86rem;
+        }
+
+        .meter-line-preview {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            padding: 0.35rem 0.6rem;
+            border-bottom: 1px solid #f1f3f5;
+            font-size: 0.84rem;
+        }
+
+        .meter-line-preview:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 991px) {
+            .meter-grid-preview {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 575px) {
+            .meter-grid-preview {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="mb-0">Delivery Challan {{ $deliveryChallan->challan_number }}</h4>
         <div class="d-flex gap-2">
@@ -39,20 +86,29 @@
             </div>
 
             <h6>Meter Entries</h6>
-            <div class="table-responsive mb-3">
-                <table class="table table-bordered">
-                    <thead class="table-light">
-                    <tr><th>Sr</th><th>Meter</th></tr>
-                    </thead>
-                    <tbody>
-                    @foreach($deliveryChallan->meters as $meter)
-                        <tr>
-                            <td>{{ $meter->sr_no }}</td>
-                            <td>{{ number_format((float) $meter->meter, 2) }}</td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
+            <div class="meter-grid-preview mb-3">
+                @php
+                    $metersBySr = $deliveryChallan->meters->keyBy('sr_no');
+                @endphp
+
+                @for($column = 0; $column < 4; $column++)
+                    @php
+                        $startSr = ($column * 12) + 1;
+                        $endSr = $startSr + 11;
+                    @endphp
+                    <div class="meter-col-preview">
+                        <div class="col-head">Sr {{ $startSr }} - {{ $endSr }}</div>
+                        @for($sr = $startSr; $sr <= $endSr; $sr++)
+                            @php
+                                $meterRow = $metersBySr->get($sr);
+                            @endphp
+                            <div class="meter-line-preview">
+                                <span><strong>{{ $sr }}</strong></span>
+                                <span>{{ $meterRow ? number_format((float) $meterRow->meter, 2) : '-' }}</span>
+                            </div>
+                        @endfor
+                    </div>
+                @endfor
             </div>
             @if($deliveryChallan->remark)
                 <div><strong>Remark:</strong> {{ $deliveryChallan->remark }}</div>

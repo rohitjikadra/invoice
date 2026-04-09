@@ -5,6 +5,57 @@
 @endphp
 
 @section('content')
+    <style>
+        .meter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .meter-column {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .meter-line {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.82rem;
+        }
+
+        .meter-sr {
+            min-width: 1.7rem;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .meter-line input {
+            height: 26px;
+            font-size: 0.78rem;
+            padding: 0.16rem 0.38rem;
+        }
+
+        .meter-line .remove-meter {
+            font-size: 0.68rem;
+            line-height: 1;
+            padding: 0.15rem 0.35rem !important;
+        }
+
+        @media (max-width: 991px) {
+            .meter-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 575px) {
+            .meter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="mb-0">{{ $isEdit ? 'Edit Delivery Challan' : 'Create Delivery Challan' }}</h4>
         <a href="{{ route('delivery-challans.index') }}" class="btn btn-secondary">Back</a>
@@ -86,28 +137,31 @@
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="mb-0">Meter Entries</h6>
-                    <button type="button" class="btn btn-sm btn-dark" id="addMeterBtn">+ Add Meter</button>
+                    <h6 class="mb-0">Meter Entries (48)</h6>
                 </div>
 
-                <div id="meterGrid" class="row g-2 mb-3">
+                <div id="meterGrid" class="meter-grid mb-3">
                     @php
                         $oldMeters = old('meters');
                         $existingMeters = isset($deliveryChallan) ? $deliveryChallan->meters->pluck('meter')->toArray() : [];
-                        $meters = $oldMeters ?? (count($existingMeters) ? $existingMeters : [0]);
+                        $baseMeters = is_array($oldMeters) ? $oldMeters : $existingMeters;
+                        $meters = array_slice(array_pad($baseMeters, 48, ''), 0, 48);
                     @endphp
-                    @foreach($meters as $i => $meter)
-                        <div class="col-md-3 meter-entry">
-                            <div class="border rounded p-2 bg-light">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="badge text-bg-secondary meter-sr">{{ $i + 1 }}</span>
-                                    <button type="button" class="btn btn-sm btn-danger py-0 px-2 remove-meter">X</button>
+                    @for($column = 0; $column < 4; $column++)
+                        <div class="meter-column">
+                            @for($row = 0; $row < 12; $row++)
+                                @php
+                                    $i = ($column * 12) + $row;
+                                    $meter = $meters[$i] ?? '';
+                                @endphp
+                                <div class="meter-entry meter-line">
+                                    <span class="meter-sr">{{ $i + 1 }}.</span>
+                                    <input type="number" name="meters[{{ $i }}]" value="{{ $meter }}" step="0.01" min="0.01" class="form-control form-control-sm">
+                                    <button type="button" class="btn btn-sm btn-danger remove-meter">X</button>
                                 </div>
-                                <label class="form-label small mb-1">Meter</label>
-                                <input type="number" name="meters[{{ $i }}]" value="{{ $meter }}" step="0.01" min="0.01" class="form-control form-control-sm" required>
-                            </div>
+                            @endfor
                         </div>
-                    @endforeach
+                    @endfor
                 </div>
 
                 <button type="submit" class="btn btn-primary">{{ $isEdit ? 'Update Delivery Challan' : 'Create Delivery Challan' }}</button>
@@ -118,6 +172,7 @@
 
 @section('scripts')
 <script>
+    const form = document.querySelector('form');
     const customerSelect = document.getElementById('customer_id');
     const receiverName = document.getElementById('receiver_name');
     const receiverAddress = document.getElementById('receiver_address');
@@ -140,37 +195,33 @@
     });
 
     const meterGrid = document.getElementById('meterGrid');
-    const addMeterBtn = document.getElementById('addMeterBtn');
-
-    function reindexMeters() {
-        [...meterGrid.querySelectorAll('.meter-entry')].forEach((entry, index) => {
-            entry.querySelector('.meter-sr').textContent = index + 1;
-            entry.querySelector('input').name = `meters[${index}]`;
-        });
-    }
-
-    addMeterBtn.addEventListener('click', () => {
-        const index = meterGrid.querySelectorAll('.meter-entry').length;
-        const col = document.createElement('div');
-        col.className = 'col-md-3 meter-entry';
-        col.innerHTML = `
-            <div class="border rounded p-2 bg-light">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge text-bg-secondary meter-sr">${index + 1}</span>
-                    <button type="button" class="btn btn-sm btn-danger py-0 px-2 remove-meter">X</button>
-                </div>
-                <label class="form-label small mb-1">Meter</label>
-                <input type="number" name="meters[${index}]" step="0.01" min="0.01" value="0" class="form-control form-control-sm" required>
-            </div>
-        `;
-        meterGrid.appendChild(col);
-    });
 
     meterGrid.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('remove-meter')) return;
-        if (meterGrid.querySelectorAll('.meter-entry').length <= 1) return;
-        e.target.closest('.meter-entry').remove();
-        reindexMeters();
+        const clearBtn = e.target.closest('.remove-meter');
+        if (!clearBtn) return;
+        const input = clearBtn.closest('.meter-entry')?.querySelector('input');
+        if (!input) return;
+        input.value = '';
+        input.focus();
+    });
+
+    form.addEventListener('submit', (e) => {
+        const meterInputs = [...meterGrid.querySelectorAll('input[name^="meters["]')];
+        const values = meterInputs.map((input) => input.value.trim());
+
+        let seenEmpty = false;
+        for (const value of values) {
+            if (value === '') {
+                seenEmpty = true;
+                continue;
+            }
+
+            if (seenEmpty) {
+                e.preventDefault();
+                alert('Meter entries must be filled line by line without gaps.');
+                return;
+            }
+        }
     });
 </script>
 @endsection

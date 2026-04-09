@@ -86,14 +86,11 @@ class DeliveryChallanController extends Controller
         return redirect()->route('delivery-challans.index')->with('success', 'Delivery challan deleted successfully.');
     }
 
-    public function preview(DeliveryChallan $deliveryChallan): Response
+    public function preview(DeliveryChallan $deliveryChallan): View
     {
         $deliveryChallan->load(['customer', 'meters']);
 
-        $pdf = Pdf::loadView('delivery_challans.pdf', compact('deliveryChallan'))
-            ->setPaper('a4', 'portrait');
-
-        return $pdf->stream('delivery-challan-preview-' . $deliveryChallan->challan_number . '.pdf');
+        return view('delivery_challans.pdf', compact('deliveryChallan'));
     }
 
     public function download(DeliveryChallan $deliveryChallan): Response

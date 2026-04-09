@@ -75,9 +75,13 @@
         .single-page .chunk-section.two-up .meter-head,
         .single-page .chunk-section.two-up .meter-block { margin: 0; }
         .remark-row td {
-            padding-top: 25px !important;
+            padding-top: 40px !important;
             padding-bottom: 3px !important;
             font-size: 9px;
+        }
+        .copy-separator {
+            border-top: 1px dashed #111;
+            margin: 6px 0;
         }
     </style>
 </head>
@@ -101,114 +105,119 @@
 <div class="{{ $forceSinglePage ? 'single-page' : '' }}">
     <div class="sheet">
         <div class="sheet-inner page-frame">
-        @foreach($meterChunks as $chunkIndex => $chunk)
-            @php
-                $chunkStartSr = (int) ($chunk->first()->sr_no ?? 1);
-                $perColumn = (int) ceil(max(1, $chunk->count()) / 4);
-                $columns = $chunk->chunk($perColumn);
-                while ($columns->count() < 4) {
-                    $columns->push(collect());
-                }
-            @endphp
+        @for($copy = 1; $copy <= 2; $copy++)
+            @foreach($meterChunks as $chunkIndex => $chunk)
+                @php
+                    $chunkStartSr = (int) ($chunk->first()->sr_no ?? 1);
+                    $perColumn = (int) ceil(max(1, $chunk->count()) / 4);
+                    $columns = $chunk->chunk($perColumn);
+                    while ($columns->count() < 4) {
+                        $columns->push(collect());
+                    }
+                @endphp
 
-            <div class="chunk-section {{ $forceSinglePage && $meterChunks->count() === 2 ? 'two-up' : '' }}">
-            <div class="chunk-section-inner">
-            <div style="position: relative; min-height: {{ $forceSinglePage ? '48px' : '78px' }}; padding: {{ $forceSinglePage ? '4px 60px' : '8px 90px' }};" class="center">
-                <div class="title-main" style="font-size:22px; font-weight:700;">{{ $companyName }}</div>
-                <div>{{ $companyAddress }}</div>
-                <div>{{ $settings->company_mobile }}</div>
-            </div>
+                <div class="chunk-section {{ $forceSinglePage && $meterChunks->count() === 2 ? 'two-up' : '' }}">
+                <div class="chunk-section-inner">
+                <div style="position: relative; min-height: {{ $forceSinglePage ? '48px' : '78px' }}; padding: {{ $forceSinglePage ? '4px 60px' : '8px 90px' }};" class="center">
+                    <div class="title-main" style="font-size:22px; font-weight:700;">{{ $companyName }}</div>
+                    <div>{{ $companyAddress }}</div>
+                    <div>{{ $settings->company_mobile }}</div>
+                </div>
 
-            <table class="split gstin-row">
-                <tr>
-                    <td class="cell bold">GSTIN : {{ $settings->gst_no }}</td>
-                    <td class="cell center bold state-code-cell">STATE &amp; CODE : {{ $settings->state_code }}-{{ $settings->state_name }}</td>
-                    <td class="cell right bold"></td>
-                </tr>
-            </table>
+                <table class="split gstin-row">
+                    <tr>
+                        <td class="cell bold">GSTIN : {{ $settings->gst_no }}</td>
+                        <td class="cell center bold state-code-cell">STATE &amp; CODE : {{ $settings->state_code }}-{{ $settings->state_name }}</td>
+                        <td class="cell right bold"></td>
+                    </tr>
+                </table>
 
-            <table class="split line challan-title-row">
-                <tr>
-                    <td class="cell bold">Vehicle No : {{ $deliveryChallan->vehicle_no }}</td>
-                    <td class="cell center bold sub-head" style="font-size:16px; font-style: italic;">DELIVERY CHALLAN</td>
-                    <td class="cell bold">EwayBill : {{ $deliveryChallan->eway_bill_no }}</td>
-                </tr>
-            </table>
+                <table class="split line challan-title-row">
+                    <tr>
+                        <td class="cell bold">Vehicle No : {{ $deliveryChallan->vehicle_no }}</td>
+                        <td class="cell center bold sub-head" style="font-size:16px; font-style: italic;">DELIVERY CHALLAN</td>
+                        <td class="cell bold">EwayBill : {{ $deliveryChallan->eway_bill_no }}</td>
+                    </tr>
+                </table>
 
-            <table class="split line">
-                <tr>
-                    <td class="cell" style="width:34%;">
-                        <div class="red bold" style="font-size:{{ $forceSinglePage ? '11px' : '13px' }};">{{ strtoupper($deliveryChallan->receiver_name) }}</div>
-                        <div>{{ $deliveryChallan->receiver_address }}</div>
-                        <div class="bold" style="margin-top:8px;">GSTIN : {{ $deliveryChallan->receiver_gstin }}</div>
-                    </td>
-                    <td class="cell" style="width:33%;">
-                        <div class="bold" style="font-size:{{ $forceSinglePage ? '11px' : '13px' }};">{{ strtoupper($deliveryChallan->consignee_name) }}</div>
-                        <div>{{ $deliveryChallan->consignee_address }}</div>
-                        <div class="bold" style="margin-top:8px;">GSTIN : {{ $deliveryChallan->consignee_gstin }}</div>
-                    </td>
-                    <td class="cell" style="width:33%;">
-                        <div class="bold challan-no" style="font-size:14px;">Challan No <span class="red" style="font-size:{{ $forceSinglePage ? '18px' : '20px' }};">: {{ preg_replace('/[^0-9]/', '', $deliveryChallan->challan_number) ?: $deliveryChallan->id }}</span></div>
-                        <div class="bold">Date <span style="margin-left:24px;">: {{ $deliveryChallan->challan_date?->format('d-m-y') }}</span></div>
-                        <div class="bold">Quality <span style="margin-left:8px;">: {{ strtoupper($deliveryChallan->quality) }}</span></div>
-                        <div class="bold">Broker <span style="margin-left:14px;">: {{ strtoupper($deliveryChallan->broker) }}</span></div>
-                    </td>
-                </tr>
-            </table>
-
-            <table class="meter-head">
-                <tr>
-                    <th>Sr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Meter</th>
-                    <th>Sr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Meter</th>
-                    <th>Sr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Meter</th>
-                    <th>Sr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Meter</th>
-                </tr>
-            </table>
-
-            <table class="meter-block">
-                <tr>
-                    @foreach($columns as $col)
-                        <td>
-                            @foreach($col as $row)
-                                <div class="meter-line">
-                                    <span class="sr">{{ ($row->sr_no - $chunkStartSr) + 1 }}</span>
-                                    <span class="meter">{{ number_format((float) $row->meter, 2) }}</span>
-                                </div>
-                            @endforeach
+                <table class="split line">
+                    <tr>
+                        <td class="cell" style="width:34%;">
+                            <div class="red bold" style="font-size:{{ $forceSinglePage ? '11px' : '13px' }};">{{ strtoupper($deliveryChallan->receiver_name) }}</div>
+                            <div>{{ $deliveryChallan->receiver_address }}</div>
+                            <div class="bold" style="margin-top:8px;">GSTIN : {{ $deliveryChallan->receiver_gstin }}</div>
                         </td>
-                    @endforeach
-                </tr>
-            </table>
+                        <td class="cell" style="width:33%;">
+                            <div class="bold" style="font-size:{{ $forceSinglePage ? '11px' : '13px' }};">{{ strtoupper($deliveryChallan->consignee_name) }}</div>
+                            <div>{{ $deliveryChallan->consignee_address }}</div>
+                            <div class="bold" style="margin-top:8px;">GSTIN : {{ $deliveryChallan->consignee_gstin }}</div>
+                        </td>
+                        <td class="cell" style="width:33%;">
+                            <div class="bold challan-no" style="font-size:14px;">Challan No <span class="red" style="font-size:{{ $forceSinglePage ? '18px' : '20px' }};">: {{ preg_replace('/[^0-9]/', '', $deliveryChallan->challan_number) ?: $deliveryChallan->id }}</span></div>
+                            <div class="bold">Date <span style="margin-left:24px;">: {{ $deliveryChallan->challan_date?->format('d-m-y') }}</span></div>
+                            <div class="bold">Quality <span style="margin-left:8px;">: {{ strtoupper($deliveryChallan->quality) }}</span></div>
+                            <div class="bold">Broker <span style="margin-left:14px;">: {{ strtoupper($deliveryChallan->broker) }}</span></div>
+                        </td>
+                    </tr>
+                </table>
 
-            <table class="meter-col-totals">
-                <tr>
-                    @foreach($columns as $col)
-                        <td>{{ number_format((float) $col->sum('meter'), 2) }}</td>
-                    @endforeach
-                </tr>
-            </table>
+                <table class="meter-head">
+                    <tr>
+                        <th>Sr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Meter</th>
+                        <th>Sr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Meter</th>
+                        <th>Sr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Meter</th>
+                        <th>Sr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Meter</th>
+                    </tr>
+                </table>
 
-            <table class="split totals no-vertical">
-                <tr>
-                    <td class="cell bold">
-                        Total Pcs : {{ number_format((float) $chunk->count(), 2) }},
-                        Meter : {{ number_format((float) $chunk->sum('meter'), 2) }}
-                    </td>
-                    <td class="cell right bold">For. {{ strtoupper($companyName) }}</td>
-                </tr>
-            </table>
+                <table class="meter-block">
+                    <tr>
+                        @foreach($columns as $col)
+                            <td>
+                                @foreach($col as $row)
+                                    <div class="meter-line">
+                                        <span class="sr">{{ ($row->sr_no - $chunkStartSr) + 1 }}</span>
+                                        <span class="meter">{{ number_format((float) $row->meter, 2) }}</span>
+                                    </div>
+                                @endforeach
+                            </td>
+                        @endforeach
+                    </tr>
+                </table>
 
-            <table class="split no-vertical remark-row">
-                <tr>
-                    <td class="cell bold" style="width:40%;">Remark : {{ $deliveryChallan->remark }}</td>
-                    <td class="cell center bold" style="width:20%; vertical-align:bottom;">Buyer&apos;s Sign.</td>
-                    <td class="cell center bold" style="width:20%; vertical-align:bottom;">Checked By</td>
-                    <td class="cell center bold" style="width:20%; vertical-align:bottom;">Authorise Signatory</td>
-                </tr>
-            </table>
-            </div>
-            </div>
-        @endforeach
+                <table class="meter-col-totals">
+                    <tr>
+                        @foreach($columns as $col)
+                            <td>{{ number_format((float) $col->sum('meter'), 2) }}</td>
+                        @endforeach
+                    </tr>
+                </table>
+
+                <table class="split totals no-vertical">
+                    <tr>
+                        <td class="cell bold">
+                            Total Pcs : {{ number_format((float) $chunk->count(), 2) }},
+                            Meter : {{ number_format((float) $chunk->sum('meter'), 2) }}
+                        </td>
+                        <td class="cell right bold">For. {{ strtoupper($companyName) }}</td>
+                    </tr>
+                </table>
+
+                <table class="split no-vertical remark-row">
+                    <tr>
+                        <td class="cell bold" style="width:40%;">Remark : {{ $deliveryChallan->remark }}</td>
+                        <td class="cell center bold" style="width:20%; vertical-align:bottom;">Buyer&apos;s Sign.</td>
+                        <td class="cell center bold" style="width:20%; vertical-align:bottom;">Checked By</td>
+                        <td class="cell center bold" style="width:20%; vertical-align:bottom;">Authorise Signatory</td>
+                    </tr>
+                </table>
+                </div>
+                </div>
+            @endforeach
+            @if($copy < 2)
+                <div class="copy-separator"></div>
+            @endif
+        @endfor
         </div>
     </div>
 </div>
