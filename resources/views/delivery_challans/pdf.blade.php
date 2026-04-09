@@ -98,25 +98,36 @@
         $logoDataUri = 'data:image/' . $extension . ';base64,' . base64_encode(file_get_contents($logoPath));
     }
 
-    $meterChunks = $deliveryChallan->meters->values()->chunk(50);
-    $forceSinglePage = $deliveryChallan->meters->count() <= 100;
+    $meters = $deliveryChallan->meters->sortBy('sr_no')->values();
+    $forceSinglePage = $meters->count() <= 100;
+
+    $slotsPerColumn = 12;
+    $columnCount = 4;
+    $totalSlots = $slotsPerColumn * $columnCount;
+
+    $meterBySr = $meters->keyBy('sr_no');
+    $columns = collect();
+    for ($column = 0; $column < $columnCount; $column++) {
+        $columnRows = collect();
+        $startSr = ($column * $slotsPerColumn) + 1;
+        $endSr = $startSr + $slotsPerColumn - 1;
+
+        for ($sr = $startSr; $sr <= $endSr; $sr++) {
+            $columnRows->push([
+                'sr' => $sr,
+                'meter' => $meterBySr->get($sr)?->meter,
+            ]);
+        }
+
+        $columns->push($columnRows);
+    }
 @endphp
 
 <div class="{{ $forceSinglePage ? 'single-page' : '' }}">
     <div class="sheet">
         <div class="sheet-inner page-frame">
         @for($copy = 1; $copy <= 2; $copy++)
-            @foreach($meterChunks as $chunkIndex => $chunk)
-                @php
-                    $chunkStartSr = (int) ($chunk->first()->sr_no ?? 1);
-                    $perColumn = (int) ceil(max(1, $chunk->count()) / 4);
-                    $columns = $chunk->chunk($perColumn);
-                    while ($columns->count() < 4) {
-                        $columns->push(collect());
-                    }
-                @endphp
-
-                <div class="chunk-section {{ $forceSinglePage && $meterChunks->count() === 2 ? 'two-up' : '' }}">
+                <div class="chunk-section">
                 <div class="chunk-section-inner">
                 <div style="position: relative; min-height: {{ $forceSinglePage ? '48px' : '78px' }}; padding: {{ $forceSinglePage ? '4px 60px' : '8px 90px' }};" class="center">
                     <div class="title-main" style="font-size:22px; font-weight:700;">{{ $companyName }}</div>
@@ -143,7 +154,7 @@
                 <table class="split line">
                     <tr>
                         <td class="cell" style="width:34%;">
-                            <div class="red bold" style="font-size:{{ $forceSinglePage ? '11px' : '13px' }};">{{ strtoupper($deliveryChallan->receiver_name) }}</div>
+                            <div class="bold" style="font-size:{{ $forceSinglePage ? '11px' : '13px' }};">{{ strtoupper($deliveryChallan->receiver_name) }}</div>
                             <div>{{ $deliveryChallan->receiver_address }}</div>
                             <div class="bold" style="margin-top:8px;">GSTIN : {{ $deliveryChallan->receiver_gstin }}</div>
                         </td>
@@ -176,8 +187,8 @@
                             <td>
                                 @foreach($col as $row)
                                     <div class="meter-line">
-                                        <span class="sr">{{ ($row->sr_no - $chunkStartSr) + 1 }}</span>
-                                        <span class="meter">{{ number_format((float) $row->meter, 2) }}</span>
+                                        <span class="sr">{{ $row['meter'] !== null ? $row['sr'] : '' }}</span>
+                                        <span class="meter">{{ $row['meter'] !== null ? number_format((float) $row['meter'], 2) : '' }}</span>
                                     </div>
                                 @endforeach
                             </td>
@@ -188,7 +199,7 @@
                 <table class="meter-col-totals">
                     <tr>
                         @foreach($columns as $col)
-                            <td>{{ number_format((float) $col->sum('meter'), 2) }}</td>
+                            <td>{{ number_format((float) $col->sum(fn (array $row): float => (float) ($row['meter'] ?? 0)), 2) }}</td>
                         @endforeach
                     </tr>
                 </table>
@@ -196,8 +207,8 @@
                 <table class="split totals no-vertical">
                     <tr>
                         <td class="cell bold">
-                            Total Pcs : {{ number_format((float) $chunk->count(), 2) }},
-                            Meter : {{ number_format((float) $chunk->sum('meter'), 2) }}
+                            Total Pcs : {{ number_format((float) $meters->count(), 2) }},
+                            Meter : {{ number_format((float) $meters->sum('meter'), 2) }}
                         </td>
                         <td class="cell right bold">For. {{ strtoupper($companyName) }}</td>
                     </tr>
@@ -213,7 +224,6 @@
                 </table>
                 </div>
                 </div>
-            @endforeach
             @if($copy < 2)
                 <div class="copy-separator"></div>
             @endif
