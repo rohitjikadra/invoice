@@ -1,0 +1,42 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Edit Customer</h4>
+        <a href="{{ route('customers.index') }}" class="btn btn-secondary">Back</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="POST" action="{{ route('customers.update', $customer) }}">
+                @csrf
+                @method('PUT')
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" value="{{ old('name', $customer->name) }}" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" value="{{ old('email', $customer->email) }}" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" value="{{ old('phone', $customer->phone) }}" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">GST Number (Optional)</label>
+                        <input type="text" name="gst_number" value="{{ old('gst_number', $customer->gst_number) }}" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" class="form-control" rows="3" required>{{ old('address', $customer->address) }}</textarea>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Update Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection
