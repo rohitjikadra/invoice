@@ -18,6 +18,7 @@
             <div class="d-flex gap-2">
                 <a href="{{ route('customers.index') }}" class="btn btn-outline-light btn-sm">Customers</a>
                 <a href="{{ route('invoices.index') }}" class="btn btn-outline-light btn-sm">Invoices</a>
+                <a href="{{ route('delivery-challans.index') }}" class="btn btn-outline-light btn-sm">Delivery Challans</a>
                 <a href="{{ route('settings.edit') }}" class="btn btn-outline-light btn-sm">Settings</a>
                 <a href="{{ route('password.edit') }}" class="btn btn-outline-light btn-sm">Change password</a>
                 <form action="{{ route('logout') }}" method="POST">

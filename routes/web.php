@@ -3,19 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DeliveryChallanController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\SettingsController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/', fn () => redirect()->route('invoices.index'));
 
@@ -29,7 +20,6 @@ Route::middleware('auth')->group(function (): void {
 
     Route::get('/password/change', [AuthController::class, 'showChangePasswordForm'])->name('password.edit');
     Route::put('/password', [AuthController::class, 'updatePassword'])->name('password.update');
-
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
 
@@ -49,4 +39,14 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/invoices/{invoice}/edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
     Route::put('/invoices/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
     Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+
+    Route::get('/delivery-challans', [DeliveryChallanController::class, 'index'])->name('delivery-challans.index');
+    Route::get('/delivery-challans/create', [DeliveryChallanController::class, 'create'])->name('delivery-challans.create');
+    Route::post('/delivery-challans', [DeliveryChallanController::class, 'store'])->name('delivery-challans.store');
+    Route::get('/delivery-challans/{deliveryChallan}', [DeliveryChallanController::class, 'show'])->name('delivery-challans.show');
+    Route::get('/delivery-challans/{deliveryChallan}/edit', [DeliveryChallanController::class, 'edit'])->name('delivery-challans.edit');
+    Route::put('/delivery-challans/{deliveryChallan}', [DeliveryChallanController::class, 'update'])->name('delivery-challans.update');
+    Route::delete('/delivery-challans/{deliveryChallan}', [DeliveryChallanController::class, 'destroy'])->name('delivery-challans.destroy');
+    Route::get('/delivery-challans/{deliveryChallan}/preview', [DeliveryChallanController::class, 'preview'])->name('delivery-challans.preview');
+    Route::get('/delivery-challans/{deliveryChallan}/download', [DeliveryChallanController::class, 'download'])->name('delivery-challans.download');
 });
