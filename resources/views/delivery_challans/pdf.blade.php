@@ -106,6 +106,10 @@
     $totalSlots = $slotsPerColumn * $columnCount;
 
     $meterBySr = $meters->keyBy('sr_no');
+    $challanDisplayNumber = (int) ltrim((string) preg_replace('/[^0-9]/', '', (string) $deliveryChallan->challan_number), '0');
+    if ($challanDisplayNumber === 0) {
+        $challanDisplayNumber = (int) $deliveryChallan->id;
+    }
     $columns = collect();
     for ($column = 0; $column < $columnCount; $column++) {
         $columnRows = collect();
@@ -164,7 +168,7 @@
                             <div class="bold" style="margin-top:8px;">GSTIN : {{ $deliveryChallan->consignee_gstin }}</div>
                         </td>
                         <td class="cell" style="width:33%;">
-                            <div class="bold challan-no" style="font-size:14px;">Challan No <span class="red" style="font-size:{{ $forceSinglePage ? '18px' : '20px' }};">: {{ preg_replace('/[^0-9]/', '', $deliveryChallan->challan_number) ?: $deliveryChallan->id }}</span></div>
+                            <div class="bold challan-no" style="font-size:14px;">Challan No <span class="red" style="font-size:{{ $forceSinglePage ? '18px' : '20px' }};">: {{ $challanDisplayNumber }}</span></div>
                             <div class="bold">Date <span style="margin-left:24px;">: {{ $deliveryChallan->challan_date?->format('d-m-y') }}</span></div>
                             <div class="bold">Quality <span style="margin-left:8px;">: {{ strtoupper($deliveryChallan->quality) }}</span></div>
                             <div class="bold">Broker <span style="margin-left:14px;">: {{ strtoupper($deliveryChallan->broker) }}</span></div>

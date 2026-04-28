@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="app-page-header">
         <h4 class="mb-0">Change password</h4>
-        <a href="{{ route('invoices.index') }}" class="btn btn-secondary btn-sm">Back</a>
+        <div class="app-page-actions">
+            <a href="{{ route('invoices.index') }}" class="btn btn-secondary btn-sm">Back</a>
+        </div>
     </div>
 
     <div class="card shadow-sm" style="max-width: 520px;">
@@ -33,7 +35,9 @@
                     <input type="password" name="password_confirmation" class="form-control" required autocomplete="new-password">
                 </div>
 
-                <button type="submit" class="btn btn-primary">Update password</button>
+                <div class="app-submit-bar">
+                    <button type="submit" class="btn btn-primary w-100 w-lg-auto">Update password</button>
+                </div>
             </form>
         </div>
     </div>

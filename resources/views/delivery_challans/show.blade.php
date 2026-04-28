@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $challanDisplayNumber = (int) ltrim((string) preg_replace('/[^0-9]/', '', (string) $deliveryChallan->challan_number), '0');
+        if ($challanDisplayNumber === 0) {
+            $challanDisplayNumber = (int) $deliveryChallan->id;
+        }
+    @endphp
+
     <style>
         .meter-grid-preview {
             display: grid;
@@ -48,9 +55,9 @@
         }
     </style>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="app-page-header">
         <h4 class="mb-0">Delivery Challan {{ $deliveryChallan->challan_number }}</h4>
-        <div class="d-flex gap-2">
+        <div class="app-page-actions">
             <a href="{{ route('delivery-challans.preview', $deliveryChallan) }}" class="btn btn-info">Preview</a>
             <a href="{{ route('delivery-challans.download', $deliveryChallan) }}" class="btn btn-primary">Download PDF</a>
             <a href="{{ route('delivery-challans.edit', $deliveryChallan) }}" class="btn btn-warning">Edit</a>
@@ -61,7 +68,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="row mb-3">
-                <div class="col-md-4"><strong>Challan No:</strong> {{ $deliveryChallan->challan_number }}</div>
+                <div class="col-md-4"><strong>Challan No:</strong> {{ $challanDisplayNumber }}</div>
                 <div class="col-md-4"><strong>Date:</strong> {{ $deliveryChallan->challan_date?->format('Y-m-d') }}</div>
                 <div class="col-md-4"><strong>Vehicle No:</strong> {{ $deliveryChallan->vehicle_no ?: '-' }}</div>
             </div>

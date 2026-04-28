@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="app-page-header">
         <h4 class="mb-0">Invoices</h4>
-        <a href="{{ route('invoices.create') }}" class="btn btn-primary">Create Invoice</a>
+        <div class="app-page-actions">
+            <a href="{{ route('invoices.create') }}" class="btn btn-primary">Create Invoice</a>
+        </div>
     </div>
 
     <div class="card shadow-sm mb-3">
@@ -41,7 +43,7 @@
         </div>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm desktop-table-wrap d-none d-lg-block">
         <div class="table-responsive">
             <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark">
@@ -82,6 +84,32 @@
         </div>
         <div class="card-body">
             {{ $invoices->appends(request()->query())->links() }}
+        </div>
+    </div>
+
+    <div class="mobile-card-wrap app-mobile-cards d-grid gap-2 d-lg-none">
+        @forelse($invoices as $invoice)
+            <div class="app-mobile-card">
+                <div class="title">{{ $invoice->invoice_number }} - {{ $invoice->customer?->name }}</div>
+                <div class="meta mb-1">Date: {{ $invoice->invoice_date?->format('Y-m-d') }} | Due: {{ $invoice->due_date?->format('Y-m-d') }}</div>
+                <div class="meta mb-2">Status: {{ strtoupper($invoice->status) }} | Total: {{ number_format((float) $invoice->total_amount, 2) }}</div>
+                <div class="app-mobile-actions">
+                    <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-sm btn-info">View</a>
+                    <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" class="flex-grow-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger w-100" onclick="return confirm('Delete this invoice?')">Delete</button>
+                    </form>
+                </div>
+            </div>
+        @empty
+            <div class="app-mobile-card text-center">No invoices found.</div>
+        @endforelse
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {{ $invoices->appends(request()->query())->links() }}
+            </div>
         </div>
     </div>
 @endsection

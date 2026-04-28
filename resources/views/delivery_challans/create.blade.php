@@ -56,9 +56,11 @@
         }
     </style>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="app-page-header">
         <h4 class="mb-0">{{ $isEdit ? 'Edit Delivery Challan' : 'Create Delivery Challan' }}</h4>
-        <a href="{{ route('delivery-challans.index') }}" class="btn btn-secondary">Back</a>
+        <div class="app-page-actions">
+            <a href="{{ route('delivery-challans.index') }}" class="btn btn-secondary">Back</a>
+        </div>
     </div>
 
     <div class="card shadow-sm">
@@ -164,7 +166,9 @@
                     @endfor
                 </div>
 
-                <button type="submit" class="btn btn-primary">{{ $isEdit ? 'Update Delivery Challan' : 'Create Delivery Challan' }}</button>
+                <div class="app-submit-bar">
+                    <button type="submit" class="btn btn-primary w-100 w-lg-auto">{{ $isEdit ? 'Update Delivery Challan' : 'Create Delivery Challan' }}</button>
+                </div>
             </form>
         </div>
     </div>

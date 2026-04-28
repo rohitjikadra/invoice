@@ -28,7 +28,7 @@ class UpdateCustomerRequest extends FormRequest
 
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique('customers', 'email')->ignore($customerId)],
+            'email' => ['sometimes', 'nullable', 'email', 'max:255', Rule::unique('customers', 'email')->ignore($customerId)],
             'phone' => ['sometimes', 'required', 'string', 'max:20'],
             'address' => ['sometimes', 'required', 'string'],
             'gst_number' => ['nullable', 'string', 'max:50'],

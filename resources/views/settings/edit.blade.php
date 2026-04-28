@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="app-page-header">
         <h4 class="mb-0">Settings</h4>
     </div>
 
@@ -80,7 +80,9 @@
                     <div class="form-text">This text will be printed on the PDF.</div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Save Settings</button>
+                <div class="app-submit-bar">
+                    <button type="submit" class="btn btn-primary w-100 w-lg-auto">Save Settings</button>
+                </div>
             </form>
         </div>
     </div>

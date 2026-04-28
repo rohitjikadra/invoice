@@ -1,0 +1,228 @@
+:root {
+    --app-radius: 14px;
+    --app-shadow: 0 6px 20px rgba(16, 24, 40, 0.08);
+    --app-border: #e8ecf1;
+    --app-bg: #f4f6fb;
+    --app-card-bg: #ffffff;
+    --app-text: #111827;
+}
+
+body.app-body {
+    background: var(--app-bg) !important;
+    color: var(--app-text);
+}
+
+.app-container {
+    max-width: 1180px;
+}
+
+.app-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.2);
+}
+
+.app-brand-logo {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.app-top-actions {
+    align-items: center;
+}
+
+.app-top-link {
+    color: rgba(255, 255, 255, 0.84);
+    text-decoration: none;
+    font-size: 0.84rem;
+    font-weight: 500;
+    padding: 0.2rem 0.1rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.app-top-link:hover {
+    color: #fff;
+}
+
+.app-top-link.active {
+    color: #fff;
+    border-bottom-color: #38bdf8;
+}
+
+.app-main {
+    padding-top: 1rem;
+    padding-bottom: 5rem;
+}
+
+.app-alert {
+    border-radius: 10px;
+}
+
+.card {
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius);
+    box-shadow: var(--app-shadow) !important;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+.btn {
+    border-radius: 10px;
+}
+
+.app-mobile-cards .app-mobile-card {
+    border: 1px solid var(--app-border);
+    border-radius: 12px;
+    background: var(--app-card-bg);
+    padding: 0.8rem;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.app-mobile-card .meta {
+    font-size: 0.82rem;
+    color: #4b5563;
+}
+
+.app-mobile-card .title {
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.app-mobile-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.app-mobile-actions .btn {
+    flex: 1 1 auto;
+    min-width: 84px;
+}
+
+.app-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.app-page-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.app-form-section-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+}
+
+.app-submit-bar {
+    position: sticky;
+    bottom: 56px;
+    background: rgba(244, 246, 251, 0.9);
+    backdrop-filter: blur(6px);
+    padding-top: 0.6rem;
+    z-index: 5;
+}
+
+.app-bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 56px;
+    background: #111827;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    z-index: 1040;
+}
+
+.app-bottom-link {
+    display: grid;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.78);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.app-bottom-link.active {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 991px) {
+    .app-brand {
+        max-width: 75%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .app-top-link {
+        width: 100%;
+        padding: 0.5rem 0.3rem;
+        border-bottom: none;
+        border-radius: 8px;
+    }
+
+    .app-top-link.active {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .app-top-actions form .btn {
+        width: 100%;
+    }
+
+    .app-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .app-page-actions {
+        width: 100%;
+    }
+
+    .app-page-actions .btn {
+        flex: 1 1 auto;
+    }
+
+    .desktop-table-wrap {
+        display: none !important;
+    }
+
+    .app-submit-bar {
+        bottom: 64px;
+    }
+}
+
+@media (min-width: 992px) {
+    .mobile-card-wrap {
+        display: none !important;
+    }
+
+    .app-main {
+        padding-bottom: 1.5rem;
+    }
+
+    .app-submit-bar {
+        position: static;
+        background: transparent;
+        padding-top: 0;
+    }
+}

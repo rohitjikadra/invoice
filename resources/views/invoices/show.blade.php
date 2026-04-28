@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="app-page-header">
         <h4 class="mb-0">Invoice {{ $invoice->invoice_number }}</h4>
-        <div class="d-flex gap-2">
+        <div class="app-page-actions">
             <a href="{{ route('invoices.download', $invoice) }}" class="btn btn-primary">Download PDF (A4)</a>
             <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-warning">Edit</a>
             <a href="{{ route('invoices.index') }}" class="btn btn-secondary">Back</a>
@@ -12,7 +12,7 @@
 
     <div class="card shadow-sm mb-3">
         <div class="card-body">
-            <div class="row">
+            <div class="row g-3">
                 <div class="col-md-6">
                     <p class="mb-1"><strong>Customer:</strong> {{ $invoice->customer?->name }}</p>
                     <p class="mb-1"><strong>Email:</strong> {{ $invoice->customer?->email }}</p>

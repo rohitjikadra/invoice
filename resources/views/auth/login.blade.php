@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row justify-content-center">
-        <div class="col-md-5">
+    <div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 180px);">
+        <div class="col-md-5 col-lg-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">Admin Login</div>
                 <div class="card-body">
